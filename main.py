@@ -5,7 +5,14 @@ from os import getcwd, listdir
 from os.path import abspath
 
 
-class BASECSVFileExtractor:
+def get_paths_of_files_in_source_folder() -> tuple:
+    """Возвращает перечень csv в src директории"""
+    source_dir_path = abspath(getcwd() + '/source_csv_files')
+    files_in_src_dir = filter(lambda f: f.endswith('csv'), listdir(source_dir_path))
+    return tuple(f'{source_dir_path}/{cur_file}' for cur_file in files_in_src_dir)
+
+
+class BASECSVFileTransformer:
     """Класс, управляющий преобразованием csv файлов"""
 
     _dialect = None
@@ -62,14 +69,7 @@ class BASECSVFileExtractor:
         self._save_csv_from_updated_list_of_dict()
 
 
-def get_paths_of_files_in_source_folder() -> tuple:
-    """Возвращает перечень csv в src директории"""
-    source_dir_path = abspath(getcwd() + '/source_csv_files')
-    files_in_src_dir = filter(lambda f: f.endswith('csv'), listdir(source_dir_path))
-    return tuple(f'{source_dir_path}/{cur_file}' for cur_file in files_in_src_dir)
-
-
-class LeadConvToRingerDogCSVFileExtractor(BASECSVFileExtractor):
+class LeadConvToRingerDogCSVFileTransformer(BASECSVFileTransformer):
     _reusable_field_names_list = []
 
     def set_reusable_field_names_list(self, reusable_field_names_list):
@@ -77,7 +77,7 @@ class LeadConvToRingerDogCSVFileExtractor(BASECSVFileExtractor):
         self._reusable_field_names_list = reusable_field_names_list
 
     def __init__(self, src_file_path, dst_dir_path, reusable_field_names_list=[], *args, **kwargs):
-        super(LeadConvToRingerDogCSVFileExtractor, self).__init__(src_file_path, dst_dir_path, *args, **kwargs)
+        super(LeadConvToRingerDogCSVFileTransformer, self).__init__(src_file_path, dst_dir_path, *args, **kwargs)
         self.set_reusable_field_names_list(reusable_field_names_list=reusable_field_names_list)
 
     def _prepare_phone_number_sting(self, src_phone_str):
@@ -106,10 +106,10 @@ class LeadConvToRingerDogCSVFileExtractor(BASECSVFileExtractor):
 if __name__ == '__main__':
     try:
         dst_dir_path = abspath(getcwd() + '/result_csv_files')
-        NeededExtractor = LeadConvToRingerDogCSVFileExtractor
+        NeededTransformer = LeadConvToRingerDogCSVFileTransformer
 
         for cur_file_path in get_paths_of_files_in_source_folder():
-            NeededExtractor(
+            NeededTransformer(
                 src_file_path=cur_file_path,
                 dst_dir_path=dst_dir_path,
                 reusable_field_names_list=[
