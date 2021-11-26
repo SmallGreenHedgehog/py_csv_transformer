@@ -136,10 +136,12 @@ class LeadConvToRingerDogCSVFileTransformer(CSVFileTransformerWithPhones):
         """Подготавливает данные из лид конвертера для звонопса"""
         prepared_csv_file_list_of_dict = []
         for cur_dict in self._csv_file_list_of_dict:
-            new_dict = {}
+            res_phone = self.prepare_phone_number_string(src_phone_str=cur_dict.get('phone'))
+            if len(res_phone) > 0:
+                new_dict = {}
 
-            self._append_reusable_fields_to_new_dict(cur_dict=cur_dict, new_dict=new_dict)
-            new_dict['phone'] = self.prepare_phone_number_string(src_phone_str=cur_dict.get('phone'))
+                self._append_reusable_fields_to_new_dict(cur_dict=cur_dict, new_dict=new_dict)
+                new_dict['phone'] = res_phone
 
-            prepared_csv_file_list_of_dict.append(new_dict)
+                prepared_csv_file_list_of_dict.append(new_dict)
             self._csv_file_list_of_dict = prepared_csv_file_list_of_dict

@@ -38,6 +38,11 @@ class PhoneNumber:
         if len(self._phone_number) == 11 and self._phone_number[0:2] == '79':
             self._phone_number = '+' + self._phone_number
 
+    def _remove_non_russian_mobile_numbers(self):
+        """Удаляет все номера, начинающиеся не с +79"""
+        if not(len(self._phone_number) == 12 and self._phone_number[0:3] == '+79'):
+            self._phone_number = ''
+
     @abstractmethod
     def prepare_phone_number(self):
         """Абстрактный метод для подготовки телефонного номера в наследниках"""
@@ -57,3 +62,4 @@ class PhoneNumberForRingerDog(PhoneNumber):
         self._replace_eight_to_seven_for_11_digit()
         self._append_seven_for_10_digit()
         self._append_plus_at_start_with_seven()
+        self._remove_non_russian_mobile_numbers()
