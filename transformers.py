@@ -61,7 +61,7 @@ class BASECSVFileTransformer:
         self._prepare_data_in_list_of_dict()
         self._save_csv_from_updated_list_of_dict()
 
-
+# TODO вынести переиспользуемый функционал в классы миксинов
 class CSVFileTransformerWithReusableFields(BASECSVFileTransformer):
     """Класс для подготовки csv с переносимыми полями"""
     _reusable_field_names_tuple = ()
