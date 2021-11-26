@@ -12,6 +12,62 @@ def get_paths_of_files_in_source_folder() -> tuple:
     return tuple(f'{source_dir_path}/{cur_file}' for cur_file in files_in_src_dir)
 
 
+class BasePhoneNumber:
+    """Базовый класс для различных подготовок телефонных номеров
+
+    _phone_number - обрабатываемое свойство номера телефона,
+    возвращается в переопределяемом свойстве-методе prepared_phone_number
+
+    """
+    _src_phone_number = ''
+    _phone_number = ''
+
+    def set_src_phone_number(self, src_phone_number):
+        """Сеттер исходного номера"""
+        self._src_phone_number = src_phone_number
+
+    def __init__(self, src_phone_number):
+        self.set_src_phone_number(src_phone_number=src_phone_number)
+        self._phone_number = self._src_phone_number
+
+    @property
+    @abstractmethod
+    def prepared_phone_number(self):
+        """Абстрактный метод для подготовки телефонного номера в наследниках"""
+        return self._phone_number
+
+
+class PhoneNumber(BasePhoneNumber):
+    def _remove_left_symbols_from_phone_str(self):
+        """Удаляет лишние символы из телефонного номер. Очистка"""
+        self._phone_number = ''.join(s for s in self._phone_number if s in '0123456789')
+
+    def _replace_eight_to_seven_for_11_digit(self):
+        """Заменяем восьмерку на семерку в 11 значных номерах, нач. с 89. Выполнять после очистки"""
+        if len(self._phone_number) == 11 and self._phone_number[0:2] == '89':
+            self._phone_number = '7' + self._phone_number[1:]
+
+    def _append_seven_for_10_digit(self):
+        """Добавляет семерку для десятизначных номеров, начинающихся с девяки"""
+        if len(self._phone_number) == 10 and self._phone_number[0] == '9':
+            self._phone_number = '7' + self._phone_number
+
+
+    def _append_plus_at_start_with_seven(self):
+        """Добавляет + в начало номера для 11 значных номеров, нач. с 79. Выполнять после очистки"""
+        if len(self._phone_number) == 11 and self._phone_number[0:2] == '79':
+            self._phone_number = '+' + self._phone_number
+
+    @property
+    def prepared_phone_number(self):
+        """Метод подготавливает и возвращает удобный телефонный номер"""
+        self._remove_left_symbols_from_phone_str()
+        self._replace_eight_to_seven_for_11_digit()
+        self._append_seven_for_10_digit()
+        self._append_plus_at_start_with_seven()
+        return self._phone_number
+
+
 class BASECSVFileTransformer:
     """Класс, управляющий преобразованием csv файлов"""
 
@@ -80,10 +136,9 @@ class LeadConvToRingerDogCSVFileTransformer(BASECSVFileTransformer):
         super(LeadConvToRingerDogCSVFileTransformer, self).__init__(src_file_path, dst_dir_path, *args, **kwargs)
         self.set_reusable_field_names_list(reusable_field_names_list=reusable_field_names_list)
 
-    def _prepare_phone_number_sting(self, src_phone_str):
+    def _prepare_phone_number_string(self, src_phone_str):
         """Готовит телефон для звонопса"""
-        # TODO реализовать функционал подготовки телефона для звонопса
-        return src_phone_str
+        return PhoneNumber(src_phone_number=src_phone_str).prepared_phone_number
 
     def _append_reusable_fields_to_new_dict(self, cur_dict, new_dict):
         """Переносит переиспользуемые поля из исходного csv в результирующий"""
@@ -97,7 +152,7 @@ class LeadConvToRingerDogCSVFileTransformer(BASECSVFileTransformer):
             new_dict = {}
 
             self._append_reusable_fields_to_new_dict(cur_dict=cur_dict, new_dict=new_dict)
-            new_dict['phone'] = self._prepare_phone_number_sting(cur_dict.get('phone'))
+            new_dict['phone'] = self._prepare_phone_number_string(cur_dict.get('phone'))
 
             prepared_csv_file_list_of_dict.append(new_dict)
             self._csv_file_list_of_dict = prepared_csv_file_list_of_dict
