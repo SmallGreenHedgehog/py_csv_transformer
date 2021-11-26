@@ -5,13 +5,6 @@ from os import getcwd, listdir
 from os.path import abspath
 
 
-def get_paths_of_files_in_source_folder() -> tuple:
-    """Возвращает перечень csv в src директории"""
-    source_dir_path = abspath(getcwd() + '/source_csv_files')
-    files_in_src_dir = filter(lambda f: f.endswith('csv'), listdir(source_dir_path))
-    return tuple(f'{source_dir_path}/{cur_file}' for cur_file in files_in_src_dir)
-
-
 class BasePhoneNumber:
     """Базовый класс для различных подготовок телефонных номеров
 
@@ -51,7 +44,6 @@ class PhoneNumber(BasePhoneNumber):
         """Добавляет семерку для десятизначных номеров, начинающихся с девяки"""
         if len(self._phone_number) == 10 and self._phone_number[0] == '9':
             self._phone_number = '7' + self._phone_number
-
 
     def _append_plus_at_start_with_seven(self):
         """Добавляет + в начало номера для 11 значных номеров, нач. с 79. Выполнять после очистки"""
@@ -156,6 +148,13 @@ class LeadConvToRingerDogCSVFileTransformer(BASECSVFileTransformer):
 
             prepared_csv_file_list_of_dict.append(new_dict)
             self._csv_file_list_of_dict = prepared_csv_file_list_of_dict
+
+
+def get_paths_of_files_in_source_folder() -> tuple:
+    """Возвращает перечень csv в src директории"""
+    source_dir_path = abspath(getcwd() + '/source_csv_files')
+    files_in_src_dir = filter(lambda f: f.endswith('csv'), listdir(source_dir_path))
+    return tuple(f'{source_dir_path}/{cur_file}' for cur_file in files_in_src_dir)
 
 
 if __name__ == '__main__':
