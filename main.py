@@ -52,7 +52,7 @@ class PhoneNumber(BasePhoneNumber):
 
     @property
     def prepared_phone_number(self):
-        """Метод подготавливает и возвращает удобный телефонный номер"""
+        """Подготавливает и возвращает удобный телефонный номер"""
         self._remove_left_symbols_from_phone_str()
         self._replace_eight_to_seven_for_11_digit()
         self._append_seven_for_10_digit()
@@ -121,7 +121,7 @@ class LeadConvToRingerDogCSVFileTransformer(BASECSVFileTransformer):
     _reusable_field_names_list = []
 
     def set_reusable_field_names_list(self, reusable_field_names_list):
-        """Метод для установки переносимых полей из исходного csv в результирующий"""
+        """Сеттер списка переносимых полей из исходного csv в результирующий"""
         self._reusable_field_names_list = reusable_field_names_list
 
     def __init__(self, src_file_path, dst_dir_path, reusable_field_names_list=[], *args, **kwargs):
@@ -138,7 +138,7 @@ class LeadConvToRingerDogCSVFileTransformer(BASECSVFileTransformer):
             new_dict[cur_field_name] = cur_dict.get(cur_field_name)
 
     def _prepare_data_in_list_of_dict(self):
-        """Метод для подготовки данных из лид конвертера для звонопса"""
+        """Подготавливает данные из лид конвертера для звонопса"""
         prepared_csv_file_list_of_dict = []
         for cur_dict in self._csv_file_list_of_dict:
             new_dict = {}
