@@ -2,7 +2,8 @@ from _csv import register_dialect
 from abc import abstractmethod
 from csv import unix_dialect, DictReader, DictWriter
 
-from phone_number_preparers import PhoneNumber, PhoneNumberForRingerDog
+from phone_number_preparers import PhoneNumberForRingerDog
+from transformers_mixins import CSVFileTransformerWithReusableFieldsMixin, CSVFileTransformerWithPhonesMixin
 
 
 class BASECSVFileTransformer:
@@ -61,68 +62,12 @@ class BASECSVFileTransformer:
         self._prepare_data_in_list_of_dict()
         self._save_csv_from_updated_list_of_dict()
 
-# TODO вынести переиспользуемый функционал в классы миксинов
-class CSVFileTransformerWithReusableFields(BASECSVFileTransformer):
-    """Класс для подготовки csv с переносимыми полями"""
-    _reusable_field_names_tuple = ()
 
-    def set_reusable_field_names_tuple(self, reusable_field_names_tuple):
-        """Сеттер списка переносимых полей из исходного csv в результирующий"""
-        self._reusable_field_names_tuple = reusable_field_names_tuple
-
-    def _append_reusable_fields_to_new_dict(self, cur_dict, new_dict):
-        """Переносит переиспользуемые поля из исходного csv в результирующий"""
-        for cur_field_name in self._reusable_field_names_tuple:
-            new_dict[cur_field_name] = cur_dict.get(cur_field_name)
-
-    def __init__(self, src_file_path, dst_dir_path, reusable_field_names_tuple=(), *args, **kwargs):
-        super(CSVFileTransformerWithReusableFields, self).__init__(
-            src_file_path=src_file_path,
-            dst_dir_path=dst_dir_path,
-            *args, **kwargs
-        )
-        self.set_reusable_field_names_tuple(reusable_field_names_tuple=reusable_field_names_tuple)
-
-    @abstractmethod
-    def _prepare_data_in_list_of_dict(self):
-        """Метод для подготовки данных"""
-        pass
-
-
-class CSVFileTransformerWithPhones(CSVFileTransformerWithReusableFields):
-    """Класс для подготовки CSV с телефонами"""
-    _phone_number_class = None
-
-    def set_phone_number_class(self, phone_number_class):
-        """Сеттер класса для подготовки номера телефона"""
-        self._phone_number_class = phone_number_class
-
-    def prepare_phone_number_string(self, src_phone_str) -> str:
-        """Возвращает приготовленную строку номера телефона, согласно установленного класса"""
-        if not self._phone_number_class:
-            raise AttributeError('Аттрибут "_phone_number_class" должен быть установлен методом set_phone_number_class')
-        return self._phone_number_class(src_phone_number=src_phone_str).prepared_phone_number
-
-    def __init__(self, src_file_path, dst_dir_path,
-                 reusable_field_names_tuple=(),
-                 phone_number_class=PhoneNumber,
-                 *args, **kwargs
-                 ):
-        super(CSVFileTransformerWithPhones, self).__init__(
-            src_file_path,
-            dst_dir_path,
-            reusable_field_names_tuple=reusable_field_names_tuple,
-            *args, **kwargs
-        )
-        self.set_phone_number_class(phone_number_class=phone_number_class)
-
-    @abstractmethod
-    def _prepare_data_in_list_of_dict(self):
-        """Метод для подготовки данных"""
-        pass
-
-
-class LeadConvToRingerDogCSVFileTransformer(CSVFileTransformerWithPhones):
+class LeadConvToRingerDogCSVFileTransformer(
+    CSVFileTransformerWithReusableFieldsMixin,
+    CSVFileTransformerWithPhonesMixin,
+    BASECSVFileTransformer
+):
     def __init__(self, src_file_path, dst_dir_path, reusable_field_names_tuple=(), *args, **kwargs):
         super(LeadConvToRingerDogCSVFileTransformer, self).__init__(
             src_file_path=src_file_path,
@@ -140,7 +85,7 @@ class LeadConvToRingerDogCSVFileTransformer(CSVFileTransformerWithPhones):
             if len(res_phone) > 0:
                 new_dict = {}
 
-                self._append_reusable_fields_to_new_dict(cur_dict=cur_dict, new_dict=new_dict)
+                self.append_reusable_fields_to_new_dict(cur_dict=cur_dict, new_dict=new_dict)
                 new_dict['phone'] = res_phone
 
                 prepared_csv_file_list_of_dict.append(new_dict)
