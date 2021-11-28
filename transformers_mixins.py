@@ -44,8 +44,8 @@ class CSVFileTransformerWithPhonesMixin:
                  ):
         self.set_phone_number_class(phone_number_class=phone_number_class)
         super(CSVFileTransformerWithPhonesMixin, self).__init__(
-            src_file_path,
-            dst_dir_path,
+            src_file_path=src_file_path,
+            dst_dir_path=dst_dir_path,
             reusable_field_names_tuple=reusable_field_names_tuple,
             *args, **kwargs
         )
