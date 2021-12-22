@@ -31,7 +31,7 @@ class CSVFileTransformerWithPhonesMixin:
         """Сеттер класса для подготовки номера телефона"""
         self._phone_number_class = phone_number_class
 
-    def prepare_phone_number_string(self, src_phone_str) -> str:
+    def prepared_phone_number_string(self, src_phone_str) -> str:
         """Возвращает приготовленную строку номера телефона, согласно установленного класса"""
         if not self._phone_number_class:
             raise AttributeError('Аттрибут "_phone_number_class" должен быть установлен методом set_phone_number_class')

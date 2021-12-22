@@ -70,7 +70,7 @@ class LeadConvToRingerDogCSVFileTransformer(
         """Подготавливает данные из лид конвертера для звонопса"""
         prepared_csv_file_list_of_dict = []
         for cur_dict in self._csv_file_list_of_dict:
-            res_phone = self.prepare_phone_number_string(src_phone_str=cur_dict.get('phone'))
+            res_phone = self.prepared_phone_number_string(src_phone_str=cur_dict.get('phone'))
             if len(res_phone) > 0:
                 new_dict = {}
 
