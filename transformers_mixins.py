@@ -1,3 +1,4 @@
+from preparers_for_full_names import FullName
 from preparers_for_phone_number import PhoneNumber
 
 
@@ -47,5 +48,32 @@ class CSVFileTransformerWithPhonesMixin:
             src_file_path=src_file_path,
             dst_dir_path=dst_dir_path,
             reusable_field_names_tuple=reusable_field_names_tuple,
+            *args, **kwargs
+        )
+
+
+class CSVFileTransformerWithFullNames:
+    """Миксин для подготовки CSV с разделением полных имен"""
+
+    _full_names_class = None
+
+    def set_full_names_class(self, full_names_class):
+        """Сеттер класса для для разделения полных имен"""
+        self._full_names_class = full_names_class
+
+    def get_full_name_obj(self, src_full_name) -> FullName:
+        """Возвращает приготовленную строку номера телефона, согласно установленного класса"""
+        if not self._full_names_class:
+            raise AttributeError('Аттрибут "_full_names_class" должен быть установлен методом set_full_names_class')
+        return self._full_names_class(src_full_name=src_full_name)
+
+    def __init__(self, src_file_path, dst_dir_path,
+                 full_names_class=FullName,
+                 *args, **kwargs
+                 ):
+        self.set_full_names_class(full_names_class=full_names_class)
+        super(CSVFileTransformerWithFullNames, self).__init__(
+            src_file_path=src_file_path,
+            dst_dir_path=dst_dir_path,
             *args, **kwargs
         )
