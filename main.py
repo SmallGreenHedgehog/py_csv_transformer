@@ -1,7 +1,7 @@
 from os import getcwd, listdir
 from os.path import abspath
 
-from transformers import LeadConvToRingerDogCSVFileTransformer
+from transformers import LeadConvToRingerDogCSVFileTransformer, DavidPlatformToLeadConvSubscriptionTransformer
 
 
 def get_paths_of_files_in_source_folder() -> tuple:
@@ -13,17 +13,13 @@ def get_paths_of_files_in_source_folder() -> tuple:
 
 if __name__ == '__main__':
     try:
+        # TODO вынести в настраиваемый GUI
         dst_dir_path = abspath(getcwd() + '/result_csv_files')
-        NeededTransformer = LeadConvToRingerDogCSVFileTransformer
+        NeededTransformer = DavidPlatformToLeadConvSubscriptionTransformer
 
         for cur_file_path in get_paths_of_files_in_source_folder():
             NeededTransformer(
-                src_file_path=cur_file_path,
-                dst_dir_path=dst_dir_path,
-                reusable_field_names_tuple=(
-                    'first_name', 'last_name', 'channel_name',
-                    'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'
-                ),
+                src_file_path=cur_file_path, dst_dir_path=dst_dir_path,
             ).extract_data_to_result_file()
 
     except Exception as e:
