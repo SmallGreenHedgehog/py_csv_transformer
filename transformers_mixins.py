@@ -1,4 +1,4 @@
-from phone_number_preparers import PhoneNumber
+from preparers_for_phone_number import PhoneNumber
 
 
 class CSVFileTransformerWithReusableFieldsMixin:

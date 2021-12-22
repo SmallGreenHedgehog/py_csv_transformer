@@ -2,7 +2,7 @@ from _csv import register_dialect
 from abc import abstractmethod
 from csv import unix_dialect, DictReader, DictWriter
 
-from phone_number_preparers import PhoneNumberForRingerDog
+from preparers_for_phone_number import PhoneNumberForRingerDog
 from transformers_mixins import CSVFileTransformerWithReusableFieldsMixin, CSVFileTransformerWithPhonesMixin
 
 
