@@ -74,9 +74,13 @@ class FullNameFromDavidPlatform(FullName):
 
     def _prepare_first_name(self):
         """Готовит свойство имени"""
+        self._first_name = self._without_extra_spaces_full_name
+
         full_name_words_list = self._without_extra_spaces_full_name.split()
-        first_word = full_name_words_list[0] if len(full_name_words_list) > 0 else ''
-        self._first_name = first_word if self._check_first_name(first_word) else self._without_extra_spaces_full_name
+        for cur_word in full_name_words_list:
+            if self._check_first_name(cur_word):
+                self._first_name = cur_word
+                break
 
     def _prepare_last_name(self):
         """Готовит свойство фамилии
