@@ -2,8 +2,8 @@ from _csv import register_dialect
 from csv import unix_dialect, DictReader
 
 
-class CSVFileReader:
-    """Базовый класс для чтения csv файлов"""
+class CSVFileReaderMixin:
+    """Миксин для чтения csv файлов"""
     _dialect = None
     _filename = None
     _src_file_path = None
@@ -32,5 +32,5 @@ class CSVFileReader:
         self._init_dialect()
         self.set_file_path(src_file_path=src_file_path)
         self._read_csv_in_list_of_dict()
-        
-        super(CSVFileReader, self).__init__(*args, **kwargs)
+        super(CSVFileReaderMixin, self).__init__(*args, **kwargs)
+

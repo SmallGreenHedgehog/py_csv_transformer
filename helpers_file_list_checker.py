@@ -1,6 +1,7 @@
 from abc import abstractmethod
-from helpers_csv_file_reader import CSVFileReader
+
 from helpers_singleton import SingletonMeta
+from helpers_mixins import CSVFileReaderMixin
 
 
 class ListChecker(metaclass=SingletonMeta):
@@ -29,7 +30,7 @@ class StrListChecker(ListChecker):
         return True if str(value).lower().strip() in self._list_for_check else False
 
 
-class ListCheckerFromCSVNamesFile(CSVFileReader, StrListChecker):
+class ListCheckerFromCSVNamesFile(CSVFileReaderMixin, StrListChecker):
     def _init_list(self, *args, **kwargs):
         """Инициализирует список из выбранной колонки csv файла"""
         column_name = kwargs.get('column_name')
