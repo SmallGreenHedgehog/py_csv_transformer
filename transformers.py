@@ -1,4 +1,4 @@
-from _csv import register_dialect
+from _csv import register_dialect, QUOTE_MINIMAL
 from abc import abstractmethod
 from csv import DictWriter, unix_dialect
 
@@ -90,12 +90,13 @@ class DavidPlatformToLeadConvSubscriptionTransformer(
     BASECSVFileTransformer
 ):
     def _init_dialect(self):
-        class DefaultDialect(unix_dialect):
+        class LeadConvSubscriptionsDialect(unix_dialect):
             """Describe the usual properties of Unix-generated CSV files."""
             delimiter = ','
+            quoting = QUOTE_MINIMAL
 
-        register_dialect("default", DefaultDialect)
-        self._dialect = 'default'
+        register_dialect("lead_conv_subscriptions", LeadConvSubscriptionsDialect)
+        self._dialect = 'lead_conv_subscriptions'
 
     def __init__(
             self, src_file_path, dst_dir_path,
