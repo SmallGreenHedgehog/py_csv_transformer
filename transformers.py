@@ -1,9 +1,12 @@
+from _csv import register_dialect
 from abc import abstractmethod
-from csv import DictWriter
+from csv import DictWriter, unix_dialect
 
 from helpers_mixins import CSVFileReaderMixin
+from preparers_for_full_names import FullNameFromDavidPlatform
 from preparers_for_phone_number import PhoneNumberForRingerDog
-from transformers_mixins import CSVFileTransformerWithReusableFieldsMixin, CSVFileTransformerWithPhonesMixin
+from transformers_mixins import CSVFileTransformerWithReusableFieldsMixin, CSVFileTransformerWithPhonesMixin, \
+    CSVFileTransformerWithFullNames
 
 
 class BASEFileTransformer:
@@ -79,3 +82,40 @@ class LeadConvToRingerDogCSVFileTransformer(
 
                 prepared_csv_file_list_of_dict.append(new_dict)
             self._csv_file_list_of_dict = prepared_csv_file_list_of_dict
+
+
+class DavidPlatformToLeadConvSubscriptionTransformer(
+    CSVFileTransformerWithReusableFieldsMixin,
+    CSVFileTransformerWithFullNames,
+    BASECSVFileTransformer
+):
+    def _init_dialect(self):
+        class DefaultDialect(unix_dialect):
+            """Describe the usual properties of Unix-generated CSV files."""
+            delimiter = ','
+
+        register_dialect("default", DefaultDialect)
+        self._dialect = 'default'
+
+    def __init__(self, src_file_path, dst_dir_path, reusable_field_names_tuple=(), *args, **kwargs):
+        super(DavidPlatformToLeadConvSubscriptionTransformer, self).__init__(
+            src_file_path=src_file_path,
+            dst_dir_path=dst_dir_path,
+            reusable_field_names_tuple=reusable_field_names_tuple,
+            full_names_class=FullNameFromDavidPlatform,
+            *args, **kwargs
+        )
+
+    def _prepare_data_for_export(self):
+        """Подготавливает данные подписок из платформы Давида для лид конвертера"""
+        prepared_csv_file_list_of_dict = []
+        for cur_dict in self._csv_file_list_of_dict:
+            new_dict = {}
+
+            self.append_reusable_fields_to_new_dict(cur_dict=cur_dict, new_dict=new_dict)
+            full_name_obj = self.get_full_name_obj(cur_dict.get('name'))
+            new_dict['first_name'] = full_name_obj.first_name
+            new_dict['last_name'] = full_name_obj.last_name
+
+            prepared_csv_file_list_of_dict.append(new_dict)
+        self._csv_file_list_of_dict = prepared_csv_file_list_of_dict
