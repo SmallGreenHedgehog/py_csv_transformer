@@ -97,7 +97,15 @@ class DavidPlatformToLeadConvSubscriptionTransformer(
         register_dialect("default", DefaultDialect)
         self._dialect = 'default'
 
-    def __init__(self, src_file_path, dst_dir_path, reusable_field_names_tuple=(), *args, **kwargs):
+    def __init__(
+            self, src_file_path, dst_dir_path,
+            reusable_field_names_tuple=(
+                    'ident', 'type', 'id', 'channel_id', 'system_id',
+                    'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+                    'created_at', 'updated_at'
+            ),
+            *args, **kwargs
+    ):
         super(DavidPlatformToLeadConvSubscriptionTransformer, self).__init__(
             src_file_path=src_file_path,
             dst_dir_path=dst_dir_path,
