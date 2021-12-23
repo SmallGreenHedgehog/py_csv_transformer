@@ -55,22 +55,22 @@ class FullName:
 
 
 class FullNameFromDavidPlatform(FullName):
-    _nature_list_checker = None
+    _nature_names_list_checker = None
 
-    def _init_nature_list_checker(self):
+    def _init_nature_names_list_checker(self):
         nature_names_file_path = abspath(getcwd() + '/csv_dict_helpers/nature_names.csv')
-        self._nature_list_checker = ListCheckerFromCSVNamesFile(
+        self._nature_names_list_checker = ListCheckerFromCSVNamesFile(
             src_file_path=nature_names_file_path,
             column_name='Name',
         )
 
     def __init__(self, *args, **kwargs):
-        self._init_nature_list_checker()
+        self._init_nature_names_list_checker()
         super(FullNameFromDavidPlatform, self).__init__(*args, **kwargs)
 
     def _check_first_name(self, first_name):
         """Проверяет имя по справочнику"""
-        return self._nature_list_checker.check_value(first_name)
+        return self._nature_names_list_checker.check_value(first_name)
 
     def _prepare_first_name(self):
         """Готовит свойство имени"""
@@ -87,7 +87,9 @@ class FullNameFromDavidPlatform(FullName):
 
         Присваивает свойству _last_name
         оставшуюся часть полного имени,
-        после удаления _first_name"""
+        после удаления _first_name
+
+        """
         self._last_name = self._without_extra_spaces_full_name.replace(self._first_name, '').strip()
 
     def prepare_separate_parts_of_fullname(self):
