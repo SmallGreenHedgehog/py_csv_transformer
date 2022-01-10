@@ -1,4 +1,4 @@
-from _csv import register_dialect
+from _csv import register_dialect, QUOTE_MINIMAL
 from csv import unix_dialect, DictReader
 
 
@@ -12,7 +12,8 @@ class CSVFileReaderMixin:
     def _init_dialect(self):
         class DefaultDialect(unix_dialect):
             """Describe the usual properties of Unix-generated CSV files."""
-            delimiter = ';'
+            delimiter = ','
+            quoting = QUOTE_MINIMAL
 
         register_dialect("default", DefaultDialect)
         self._dialect = 'default'
