@@ -60,7 +60,15 @@ class LeadConvToRingerDogCSVFileTransformer(
     CSVFileTransformerWithPhonesMixin,
     BASECSVFileTransformer
 ):
-    def __init__(self, src_file_path, dst_dir_path, reusable_field_names_tuple=(), *args, **kwargs):
+    def __init__(
+            self,
+            src_file_path, dst_dir_path,
+            reusable_field_names_tuple=(
+                    'first_name', 'last_name', 'channel_name',
+                    'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'
+            ),
+            *args, **kwargs
+    ):
         super(LeadConvToRingerDogCSVFileTransformer, self).__init__(
             src_file_path=src_file_path,
             dst_dir_path=dst_dir_path,
